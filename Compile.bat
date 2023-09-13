@@ -1,4 +1,4 @@
-set example="spiderWeb.cpp"
+set example="Cursor.c"
 ::set example="rotatingRect.cpp"
 ::set example="simple_rect.cpp"
 ::set example="Moving_Rect.cpp"
