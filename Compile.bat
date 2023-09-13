@@ -1,7 +1,5 @@
-set example="Cursor.c"
-::set example="rotatingRect.cpp"
-::set example="simple_rect.cpp"
-::set example="Moving_Rect.cpp"
+set example="SquareGame.cpp"
+::set example="RotatingRect.cpp"
 set gcc="C:\MinGW\bin\gcc.exe"
 
 g++ -c -o example.o %example%  
