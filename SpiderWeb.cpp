@@ -1,59 +1,63 @@
-#include <iostream>
+#include <GL/glut.h>
 #include <cmath>
-#include <GL/freeglut.h>
 
-const int numLines = 12;  // Number of lines in the spiderweb
-const float webRadius = 0.8f;  // Radius of the spiderweb
+const float PI = 3.14159265358979323846;
+
+void drawBezierCurve(float x1, float y1, float x2, float y2, float x3, float y3) {
+    glBegin(GL_LINE_STRIP);
+    for (float t = 0.0; t <= 1.0; t += 0.25) {
+        float xt = (1 - t) * (1 - t) * x1 + 2 * (1 - t) * t * x2 + t * t * x3;
+        float yt = (1 - t) * (1 - t) * y1 + 2 * (1 - t) * t * y2 + t * t * y3;
+        glVertex2f(xt, yt);
+    }
+    glEnd();
+}
 
 void drawSpiderWeb() {
     glClear(GL_COLOR_BUFFER_BIT);
-    glLoadIdentity();
 
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // Set background color to black
-    glColor3f(1.0f, 1.0f, 1.0f); // Set line color to white
+    float centerX = 0.0f;
+    float centerY = 0.0f;
+    int numPoints = 9;
+    int numRings = 8;
+    float maxRadius = 0.9f;
+    for (int i = 0; i < numPoints; ++i) {
+        float angle = 2.0 * PI * i / numPoints;
+        float x = centerX + maxRadius * cos(angle);
+        float y = centerY + maxRadius * sin(angle);
 
-    // Draw the radial lines radiating from the center
-    glBegin(GL_LINES);
-    for (int i = 0; i < numLines; ++i) {
-        float angle = 2 * M_PI * i / numLines;
-        float x1 = 0.0f;
-        float y1 = 0.0f;
-        float x2 = webRadius * cos(angle);
-        float y2 = webRadius * sin(angle);
-
-        glVertex2f(x1, y1);
-        glVertex2f(x2, y2);
+        glBegin(GL_LINES);
+        glVertex2f(centerX, centerY);
+        glVertex2f(x, y);
+        glEnd();
     }
-    glEnd();
+    for (int j = 1; j <= numRings; ++j) {
+        float currentRadius = (maxRadius / numRings) * j;
+        for (int i = 0; i < numPoints; ++i) {
+            float startAngle = 2.0 * PI * i / numPoints;
+            float endAngle = 2.0 * PI * (i + 1) / numPoints;
+            float x1 = centerX + currentRadius * cos(startAngle);
+            float y1 = centerY + currentRadius * sin(startAngle);
+            float x3 = centerX + currentRadius * cos(endAngle);
+            float y3 = centerY + currentRadius * sin(endAngle);
+            float controlRadius = currentRadius * 0.8;
+            float x2 = centerX + controlRadius * cos((startAngle + endAngle) / 2);
+            float y2 = centerY + controlRadius * sin((startAngle + endAngle) / 2);
 
-    // Draw the cross lines in white
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glBegin(GL_LINES);
-    glVertex2f(-webRadius, 0.0f);
-    glVertex2f(webRadius, 0.0f);
-    glVertex2f(0.0f, -webRadius);
-    glVertex2f(0.0f, webRadius);
-    glEnd();
+            drawBezierCurve(x1, y1, x2, y2, x3, y3);
+        }
+    }
 
     glutSwapBuffers();
-}
-
-void reshape(int width, int height) {
-    glViewport(0, 0, width, height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
-    glMatrixMode(GL_MODELVIEW);
 }
 
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-    glutInitWindowSize(800, 800);
-    glutCreateWindow("Spiderweb with Cross");
+    glutInitWindowSize(640, 480);
+    glutCreateWindow("SpiderWeb");
 
     glutDisplayFunc(drawSpiderWeb);
-    glutReshapeFunc(reshape);
 
     glutMainLoop();
     return 0;

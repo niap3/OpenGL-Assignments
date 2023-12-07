@@ -11,9 +11,10 @@
 
 class Rect
 {
-	protected:
+	public:
 		float x,y,h,w;
 		float velocityX,velocityY;
+		float x2, y2;
 		// float cr,cg,cb;
 	public:
 		Rect(float X,float Y, float H, float W,float vx = 0, float vy = 0)
@@ -39,12 +40,34 @@ class Rect
 			x += velocityX; 
 			y += velocityY; 
 			glBegin(GL_POLYGON);
-				glVertex2f(x, y);
-				glVertex2f( x + w, y);
-				glVertex2f( x + w,  y + h);
-				glVertex2f(x,  y + h);
+				glVertex2f(x, y); //top left
+				glVertex2f( x + w, y); //top right
+				glVertex2f( x + w,  y - h); //bottom right
+				glVertex2f(x,  y - h); //bottom left
 			glEnd();
 		}
+		bool isOverlapping(Rect rect2)
+    	{
+        // finding bottom right coordinates
+        x2 = x + w;
+        y2 = y - h;
+
+        // bottom right coordintes of second
+        rect2.x2 = rect2.x + rect2.w;
+        rect2.y2 = rect2.y - rect2.h;
+
+        // If one rectangle is on left side of other
+        if (rect2.x2 < x || x2 < rect2.x)
+            return false;
+
+        // If one rectangle is above other
+        if (rect2.y < y2 || x < rect2.y2)
+            return false;
+
+        // None fulfilled
+        return true;
+    	}
+
 };
 
 class mainRect : public Rect
@@ -108,7 +131,7 @@ class BoundingRect : public Rect
  
 mainRect pc = mainRect(-0.25,-0.5,0.20,0.20,0,0);
 BoundingRect r1 = BoundingRect(-0.5,-0.5,0.25,0.25,0.01,.02);
-BoundingRect r2 = BoundingRect(-0.5,-0.5,0.25,0.25,-0.02,.01);
+//BoundingRect r2 = BoundingRect(-0.5,-0.5,0.25,0.25,-0.02,.01);
 
 void timeOut(int a)
 {
@@ -125,8 +148,14 @@ void init()
 
 void keypress(unsigned char key, int x, int y)
 {
-	// if (key == 'a')
-		pc.MoveLeft();
+	if (key == 'a')
+	pc.MoveLeft();
+	if (key == 'w')
+	pc.MoveUp();
+	if (key == 'd')
+	pc.MoveRight();
+	if (key == 's')
+	pc.MoveDown();
 }
 
 void keypressUp(unsigned char key, int x, int y)
@@ -138,19 +167,23 @@ void display()
 {
 	
 
-  glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
 	
-	r1.setColor(1.0,0,0);
-	r1.display();
-
-	r2.setColor(0,1.0,0);
-	r2.display();
-
-
-	pc.setColor(0,0,1.0);
-	// pc.MoveLeft();
-	// pc.setVelocity(.03,0);
-	pc.display();
+	if (pc.isOverlapping(r1)){
+		pc.setColor(0,0,1.0);
+		// pc.MoveLeft();
+		// pc.setVelocity(.03,0);
+		pc.display();
+	}
+	else {
+		pc.setColor(0,0,1.0);
+		// pc.MoveLeft();
+		// pc.setVelocity(.03,0);
+		pc.display();
+		r1.setColor(1.0,0,0);
+		r1.display();
+	}
+	
 
   glFlush();
 }

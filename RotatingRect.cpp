@@ -1,42 +1,37 @@
-#include <iostream>
-#include <cmath>
 #include <GL/freeglut.h>
+#include <iostream>
 
-float angle = 0.0f; // Initial rotation angle
+float RotAngle = 0.0f;
 
-void display() {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glLoadIdentity();
-
-    // Apply rotation
-    glRotatef(angle, 0.0f, 0.0f, 1.0f);
-
-    // Draw a rectangle
-    glBegin(GL_QUADS);
-    glColor3f(1.0f, 0.5f, 0.2f); // Set color to orange
+void drawRectangle() {
+    glBegin(GL_POLYGON);
     glVertex2f(-0.5f, -0.5f);
     glVertex2f(0.5f, -0.5f);
     glVertex2f(0.5f, 0.5f);
     glVertex2f(-0.5f, 0.5f);
     glEnd();
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glLoadIdentity();
+
+    glTranslatef(0.0f, 0.0f, -1.0f);
+
+    glRotatef(RotAngle, 0.0f, 0.0f, 1.0f);
+
+    glColor3f(0.91f, 0.66f, 0.22f);
+    drawRectangle();
 
     glutSwapBuffers();
 }
 
-void reshape(int width, int height) {
-    glViewport(0, 0, width, height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
-    glMatrixMode(GL_MODELVIEW);
-}
-
 void idle() {
-    angle += 0.5f; // Rotate at a fixed speed
-    if (angle >= 360.0f) {
-        angle -= 360.0f; // Reset angle after a full rotation
+    RotAngle += 1.0f;
+    if (RotAngle > 360.0f) {
+        RotAngle -= 360.0f;
     }
-    glutPostRedisplay(); // Trigger a redisplay
+    glutPostRedisplay();
 }
 
 int main(int argc, char** argv) {
@@ -46,9 +41,9 @@ int main(int argc, char** argv) {
     glutCreateWindow("Rotating Rectangle");
 
     glutDisplayFunc(display);
-    glutReshapeFunc(reshape);
     glutIdleFunc(idle);
 
     glutMainLoop();
+    
     return 0;
 }

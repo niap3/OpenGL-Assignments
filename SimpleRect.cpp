@@ -30,28 +30,28 @@ void display()
 {
 	// glViewport(0,0,50,100);
 glMatrixMode(GL_PROJECTION); 
-   glLoadIdentity(); 
+glLoadIdentity(); 
 // gluOrtho2D(-1,1,-1,1); 
 // gluOrtho2D(-0.5,0.5,-0.5,0.5);
 gluOrtho2D(-1,1,-1,1);
 
-  glClear(GL_COLOR_BUFFER_BIT);
+glClear(GL_COLOR_BUFFER_BIT);
 
-  /* Display a red square */
-  glColor3f(1.0f, 0.0f, 0.0f);
+/* Display a red square */
+glColor3f(1.0f, 0.3f, 0.8f);
 
-  glBegin(GL_POLYGON);
-    glVertex2f(-0.5f, -0.5f);
-    glVertex2f( 0.5f, -0.5f);
-    glVertex2f( 0.5f,  0.5f);
-    glVertex2f(-0.5f,  0.5f);
-  glEnd();
+glBegin(GL_POLYGON);
+glVertex2f(-0.5f, -0.5f);
+glVertex2f( 0.5f, -0.5f);
+glVertex2f( 0.5f,  0.5f);
+glVertex2f(-0.5f,  0.5f);
+glEnd();
 
-  glFlush();
+glFlush();
 }
 void timer(int id) {
 
-   glutPostRedisplay();
+  glutPostRedisplay();
 }
 
 /* Main method */
